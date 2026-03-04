@@ -1,0 +1,23 @@
+{% extends "books/base.html" %}
+
+{% block content %}
+<h2>Edit {{ book.title }}</h2>
+
+<form method="POST">
+  {% csrf_token %}
+
+  <label>Status:</label>
+  <select name="status">
+    <option value="want">Want to Read</option>
+    <option value="completed">Completed</option>
+  </select>
+
+  <label>Rating:</label>
+  <input type="number" name="rating" min="1" max="5">
+
+  <label>Notes:</label>
+  <textarea name="notes">{{ book.notes }}</textarea>
+
+  <button>Save</button>
+</form>
+{% endblock %}

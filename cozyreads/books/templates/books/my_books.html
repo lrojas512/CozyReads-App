@@ -1,0 +1,22 @@
+{% extends "books/base.html" %}
+
+{% block content %}
+<h2>📖 Want to Read</h2>
+{% for book in want %}
+  <div>
+    <img src="{{ book.cover_url }}">
+    <h3>{{ book.title }}</h3>
+    <a href="{% url 'update_book' book.id %}">Edit</a>
+    <a href="{% url 'delete_book' book.id %}">Delete</a>
+  </div>
+{% endfor %}
+
+<h2>✅ Completed</h2>
+{% for book in completed %}
+  <div>
+    <img src="{{ book.cover_url }}">
+    <h3>{{ book.title }}</h3>
+    ⭐ {{ book.rating }}
+  </div>
+{% endfor %}
+{% endblock %}

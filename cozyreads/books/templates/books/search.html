@@ -1,0 +1,26 @@
+{% extends "books/base.html" %}
+
+{% block content %}
+<h2>Search Open Library</h2>
+
+<form method="GET">
+  <input name="q" placeholder="Search books..." />
+  <button type="submit">Search</button>
+</form>
+
+{% for book in results %}
+  <div>
+    <h3>{{ book.title }}</h3>
+    <p>{{ book.author_name|join:", " }}</p>
+
+    <form method="POST" action="{% url 'add_book' %}">
+      {% csrf_token %}
+      <input type="hidden" name="olid" value="{{ book.key }}">
+      <input type="hidden" name="title" value="{{ book.title }}">
+      <input type="hidden" name="authors" value="{{ book.author_name|join:', ' }}">
+      <input type="hidden" name="cover_id" value="{{ book.cover_i }}">
+      <button>Add to Want to Read</button>
+    </form>
+  </div>
+{% endfor %}
+{% endblock %}
