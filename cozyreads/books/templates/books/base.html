@@ -61,6 +61,14 @@
             <a href="{% url 'home' %}">Home</a>
             <a href="{% url 'search' %}">Search</a>
             <a href="{% url 'my_books' %}">My Library</a>
+
+            {% if user.is_authenticated %}
+                <span>Hello, {{ user.username }}</span>
+                <a href="{% url 'logout' %}">Log Out</a>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'signup' %}">Sign Up</a>
+            {% endif %}
         </div>
     </nav>
 

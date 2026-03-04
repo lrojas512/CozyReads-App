@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 import requests
 from .models import Book
 from django.urls import reverse
+from .forms import SignUpForm
+from django.contrib.auth.decorators import login_required
+
 
 # Create your views here.
 def home (request):
@@ -21,6 +24,7 @@ def search_books(request):
         "results": results
     })
 
+@login_required
 def add_book(request):
     if request.method == "POST":
         Book.objects.create(
@@ -31,7 +35,7 @@ def add_book(request):
             status = "want"
         )
         return redirect ("my_books")
-
+@login_required
 def my_books(request):
     want = Book.objects.filter(status="want")
     completed = Book.objects.filter(status="completed")
@@ -41,7 +45,7 @@ def my_books(request):
         "completed": completed
     })
 
-
+@login_required
 def update_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
 
@@ -54,8 +58,19 @@ def update_book(request, pk):
 
     return render(request, "books/update_book.html", {"book": book})
 
-
+@login_required
 def delete_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
     book.delete()
     return redirect("my_books")
+
+def signup(request):
+    if request.method == "POST":
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request,user)
+            return redirect("my_books")
+    else: 
+        form = SignUpForm()
+        return render(request, "books/signup.html", {"form":form})
