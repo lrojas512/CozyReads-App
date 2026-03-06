@@ -1,17 +1,31 @@
 {% extends "books/base.html" %}
-
 {% block content %}
-<h2>Search Open Library</h2>
+<h2>Search For Books</h2>
 
 <form method="GET">
   <input name="q" placeholder="Search books..." />
   <button type="submit">Search</button>
 </form>
 
+<hr>
+
+<div class = "book-grid">
 {% for book in results %}
-  <div>
-    <h3>{{ book.title }}</h3>
-    <p>{{ book.author_name|join:", " }}</p>
+  <div class="book-card">
+    {% if book.cover_i %}
+      <img src="https://covers.openlibrary.org/b/id/{{ book.cover_i }}-M.jpg">
+    {% else %}
+      <p>No Cover Available</p>
+    {% endif %}
+    <div class="book-title">
+      {{ book.title }}
+    </div>
+    <div class="book-author">
+      {{ book.author_name|join:", " }}
+    </div>
+    <a href="{% url 'book_detail' book.key %}">
+      <button class="btn">View Details</button>
+    </a>
 
     <form method="POST" action="{% url 'add_book' %}">
       {% csrf_token %}
@@ -23,4 +37,5 @@
     </form>
   </div>
 {% endfor %}
+</div>
 {% endblock %}

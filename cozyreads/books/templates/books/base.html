@@ -1,63 +1,17 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>CozyReads</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Georgia', serif;
-            background-color: #f6f1ea;
-        }
-
-        nav {
-            background-color: #6b4f4f;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin-right: 20px;
-            font-weight: bold;
-        }
-
-        nav a:hover {
-            text-decoration: underline;
-        }
-
-        .container {
-            padding: 40px;
-        }
-
-        h1, h2 {
-            color: #4b3832;
-        }
-
-        button {
-            background-color: #854442;
-            color: white;
-            padding: 6px 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #5c3d2e;
-        }
-    </style>
-</head>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap" rel="stylesheet">
 
 <body>
 
     <nav>
-        <div>
+        <div class = "navbar">
             <a href="{% url 'home' %}">📚 CozyReads</a>
-        </div>
-        <div>
             <a href="{% url 'home' %}">Home</a>
             <a href="{% url 'search' %}">Search</a>
             <a href="{% url 'my_books' %}">My Library</a>

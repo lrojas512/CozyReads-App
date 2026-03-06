@@ -13,9 +13,12 @@ class Book (models.Model):
     title = models.CharField(max_length=255)
     authors = models.CharField(max_length=255, blank=True)
     cover_id = models.IntegerField(null=True, blank=True)
+
     status = models.CharField(max_length=20, choices = STATUS_CHOICES, default='want')
     notes = models.TextField(blank=True)
     rating = models.IntegerField(null=True, blank=True)
+    pages_total = models.IntegerField(null=True, blank=True)
+    pages_read = models.IntegerField(null=True, blank=True)
 
     def cover_url(self):
         if self.cover_id:

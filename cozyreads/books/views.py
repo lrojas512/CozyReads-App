@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 import requests
+from datetime import datetime
 from .models import Book
 from django.urls import reverse
 from .forms import SignUpForm
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 
 
@@ -18,16 +20,74 @@ def search_books(request):
         url = f"https://openlibrary.org/search.json?q={query}"
         response = requests.get(url)
         data = response.json()
-        results = data["docs"][:10]
+        results = data["docs"]
     
     return render(request, "books/search.html", {
         "results": results
     })
 
+def book_detail(request, olid):
+    url = f"https://openlibrary.org{olid}.json"
+    response = requests.get(url)
+    data = response.json()
+
+    # Description
+    description = ""
+    if "description" in data:
+        if isinstance(data["description"], dict):
+            description = data["description"].get("value", "")
+        else:
+            description = data["description"]
+
+    # Authors
+    authors = []
+    for author_ref in data.get("authors", []):
+        author_key = author_ref.get("author", {}).get("key")
+        if author_key:
+            r = requests.get(f"https://openlibrary.org{author_key}.json")
+            if r.status_code == 200:
+                author_data = r.json()
+                name = author_data.get("name")
+                if name:
+                    authors.append(name)
+    if not authors:
+        authors = ["Unknown Author"]
+
+    # Published date
+    raw_date = data.get("first_publish_date") or data.get("created", {}).get("value", None)
+    published_date = "Unknown"
+    if raw_date:
+        try:
+            # Parse raw ISO date or just year
+            if len(raw_date) == 4:  # Only year
+                published_date = f"01/01/{raw_date}"
+            else:
+                dt = datetime.fromisoformat(raw_date)
+                published_date = dt.strftime("%m/%d/%Y")
+        except Exception:
+            published_date = raw_date 
+    # Global rating
+    rating = None
+    rating_url = f"https://openlibrary.org{olid}/ratings.json"
+    r = requests.get(rating_url)
+    if r.status_code == 200:
+        rating_data = r.json()
+        rating = rating_data.get("average", None)
+
+    context = {
+        "book": data,
+        "description": description,
+        "published_date": published_date,
+        "authors": authors,
+        "rating": rating
+    }
+
+    return render(request, "books/book_detail.html", context)
 @login_required
 def add_book(request):
     if request.method == "POST":
         Book.objects.create(
+            user=request.user,
             open_library_id = request.POST.get("olid"),
             title = request.POST.get('title'),
             authors = request.POST.get("authors"),
@@ -37,8 +97,8 @@ def add_book(request):
         return redirect ("my_books")
 @login_required
 def my_books(request):
-    want = Book.objects.filter(status="want")
-    completed = Book.objects.filter(status="completed")
+    want = Book.objects.filter(user=request.user,status="want")
+    completed = Book.objects.filter(user=request.user,status="completed")
 
     return render(request, "books/my_books.html", {
         "want": want,
@@ -65,12 +125,23 @@ def delete_book(request, pk):
     return redirect("my_books")
 
 def signup(request):
-    if request.method == "POST":
+    error_message = ''
+
+    if request.method == 'POST':
         form = SignUpForm(request.POST)
+
         if form.is_valid():
             user = form.save()
-            login(request,user)
-            return redirect("my_books")
-    else: 
+            login(request, user)
+            return redirect('/')
+        else:
+            error_message = 'Invalid sign up - please try again'
+    else:
         form = SignUpForm()
-        return render(request, "books/signup.html", {"form":form})
+
+    context = {
+        'form': form,
+        'error_message': error_message
+    }
+
+    return render(request, 'books/signup.html', context)

@@ -1,0 +1,32 @@
+{% extends "books/base.html" %}
+{% block content %}
+
+<div class="book-detail">
+
+    {% if book.covers %}
+        <img src="https://covers.openlibrary.org/b/id/{{ book.covers.0 }}-L.jpg">
+    {% endif %}
+
+    <h1>{{ book.title }}</h1>
+
+{% if authors %}
+    <p>By 
+    {% for author in authors %}
+        {{ author }}{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+    </p>
+{% endif %}
+
+<p><strong>Published:</strong> {{ published_date }}</p>
+
+    <p><strong>Description:</strong> {{ description }}</p>
+
+    {% if rating %}
+        <p><strong>Global rating:</strong> {{ rating|floatformat:1 }}/5 ⭐</p>
+    {% endif %}
+
+    <a href="/search/"><button class="btn">Back to Search</button></a>
+
+</div>
+
+{% endblock %}
