@@ -89,14 +89,21 @@ def book_detail(request, olid):
                 published_date = dt.strftime("%m/%d/%Y")
         except Exception:
             published_date = raw_date 
-    # Global rating
+# Global rating
     rating = None
-    rating_url = f"https://openlibrary.org/{olid}/ratings.json"
-    r = requests.get(rating_url)
-    if r.status_code == 200:
-        rating_data = r.json()
-        rating = rating_data.get("average", None)
-    
+    try:
+        rating_url = f"https://openlibrary.org/{olid}/ratings.json"
+        r = requests.get(rating_url)
+        if r.status_code == 200:
+            rating_data = r.json()
+            # Some OL rating JSON looks like {"summary": {"average": 4.5, "count": 20}}
+            summary = rating_data.get("summary", {})
+            avg = summary.get("average")
+            if avg is not None:
+                rating = round(float(avg), 2)  # Round to 2 decimal places
+    except Exception as e:
+        print("Error fetching rating:", e)
+        rating = None
        # Genres / subjects
     genres = data.get("subjects", [])  # This is usually a list of strings
 

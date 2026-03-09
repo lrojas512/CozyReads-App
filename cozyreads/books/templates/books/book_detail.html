@@ -21,10 +21,14 @@
 
     <p><strong>Description:</strong> {{ description }}</p>
 
+<p><strong>Rating:</strong> 
     {% if rating %}
-        <p><strong>Global rating:</strong> {{ rating|floatformat:1 }}/5 ⭐</p>
+        {{ rating }} / 5 ⭐
+    {% else %}
+        No rating available
     {% endif %}
-    
+</p>
+
 {% if genres %}
     <p><strong>Genres:</strong>
         {% for genre in genres %}
