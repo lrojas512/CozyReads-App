@@ -17,22 +17,66 @@
   </div>
 {% endfor %}
 </div>
+<h2>Currently Reading</h2>
+{% if reading %}
+    <ul>
+    {% for book in reading %}
+        <li>
+            <img src="{{ book.cover_url }}">
+            <br>
+            <strong>{{ book.title }}</strong> by {{ book.authors }}<br>
+            
+            {% if book.notes %}
+                <em>Notes:</em> {{ book.notes }}<br>
+            {% endif %}
+
+            {% if book.rating %}
+                <em>Rating:</em>
+                {% for i in "12345" %}
+                    {% if forloop.counter <= book.rating|floatformat:0 %}
+                        ⭐
+                    {% else %}
+                        ✩
+                    {% endif %}
+                {% endfor %}
+                <br>
+            {% endif %}
+
+            <a href="{% url 'update_book' book.pk %}">Edit</a>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No books currently being read.</p>
+{% endif %}
 <h2 class="section-title">✅ Completed</h2>
-{% for book in completed %}
-  <div class="book-card">
-    <img src="{{ book.cover_url }}">
-    <div class="book-title">{{ book.title }}</div>
-    <div class="stars">
-      {% for i in "12345" %}
-        {% if forloop.counter <= book.rating %}
-            ⭐ 
-        {% else %}
-            ☆
-        {% endif %}
-      {% endfor %}
-    </div>
-    </div>
-  </div>
-{% endfor %}
+{% if completed %}
+    <ul>
+    {% for book in completed %}
+        <li>
+            <img src="{{ book.cover_url }}">
+            <br>
+            <strong>{{ book.title }}</strong> by {{ book.authors }}<br>
+            {% if book.notes %}
+                <em>Notes:</em> {{ book.notes }}<br>
+            {% endif %}
+             {% if book.rating %}
+                <em>Rating:</em>
+                {% for i in "12345" %}
+                    {% if forloop.counter <= book.rating|floatformat:0 %}
+                        ⭐
+                    {% else %}
+                        ☆
+                    {% endif %}
+                {% endfor %}
+                <br>
+            {% endif %}
+            <a href="{% url 'update_book' book.pk %}">Edit</a>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No completed books yet.</p>
+{% endif %}
 </div>
 {% endblock %}

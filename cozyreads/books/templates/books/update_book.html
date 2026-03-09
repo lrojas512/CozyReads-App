@@ -6,18 +6,26 @@
 <form method="POST">
   {% csrf_token %}
 
-  <label>Status:</label>
-  <select name="status">
-    <option value="want">Want to Read</option>
-    <option value="completed">Completed</option>
-  </select>
+<label for="status">Status:</label>
+<select name="status" id="status">
+    <option value="want" {% if book.status == 'want' %}selected{% endif %}>Want to Read</option>
+    <option value="reading" {% if book.status == 'reading' %}selected{% endif %}>Currently Reading</option>
+    <option value="completed" {% if book.status == 'completed' %}selected{% endif %}>Completed</option>
+</select>
 
-  <label>Rating:</label>
-  <input type="number" name="rating" min="1" max="5">
+  <label for="rating">Rating:</label>
+<select name="rating" id="rating">
+    <option value="">-- No rating --</option>
+    <option value="1" {% if book.rating == 1 %}selected{% endif %}>1</option>
+    <option value="2" {% if book.rating == 2 %}selected{% endif %}>2</option>
+    <option value="3" {% if book.rating == 3 %}selected{% endif %}>3</option>
+    <option value="4" {% if book.rating == 4 %}selected{% endif %}>4</option>
+    <option value="5" {% if book.rating == 5 %}selected{% endif %}>5</option>
+</select>
 
   <label>Notes:</label>
   <textarea name="notes">{{ book.notes }}</textarea>
 
-  <button>Save</button>
+  <button type="submit">Save</button>
 </form>
 {% endblock %}

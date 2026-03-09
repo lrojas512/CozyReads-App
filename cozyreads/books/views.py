@@ -139,10 +139,12 @@ def add_book(request):
 @login_required
 def my_books(request):
     want = Book.objects.filter(user=request.user,status="want")
+    reading = Book.objects.filter(user=request.user, status="reading")
     completed = Book.objects.filter(user=request.user,status="completed")
 
     return render(request, "books/my_books.html", {
         "want": want,
+        "reading": reading,
         "completed": completed
     })
 
@@ -151,12 +153,24 @@ def update_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
 
     if request.method == "POST":
+        # Update status
         book.status = request.POST.get("status")
+        # Update notes
         book.notes = request.POST.get("notes")
-        book.rating = request.POST.get("rating")
+        # Update rating safely
+        rating_value = request.POST.get("rating")
+        if rating_value in [None, ""]:
+            book.rating = None
+        else:
+            try:
+                book.rating = float(rating_value)
+            except ValueError:
+                book.rating = None
+
         book.save()
         return redirect("my_books")
 
+    # GET request
     return render(request, "books/update_book.html", {"book": book})
 
 @login_required

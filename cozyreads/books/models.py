@@ -5,7 +5,9 @@ from django.contrib.auth.models import User
 class Book (models.Model):
     STATUS_CHOICES = [
         ('want', 'Want to Read'),
+        ('reading', "Currently Reading"),
         ('completed', 'Completed'),
+        
     ]
     title = models.CharField(max_length=255)
     author = models.CharField(max_length=255)
