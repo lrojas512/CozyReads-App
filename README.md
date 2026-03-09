@@ -3,7 +3,7 @@
 ## Screenshot
 ![Image of Home page](books/static/images/83356293-187E-4835-AAF7-BC60171DE144.jpeg)
 ## Link
-[Live App]()
+[Live App](https://cozyreads-app-efa74b518c34.herokuapp.com/)
 
 ### Details:
 Hi all! Welcome to my book tracking app. I was inspired to make this for my partner who is getting into reading multiple books. Here you can search for a large amount of books provided by an Open Library API. You can create an account to be able to create your lists as well as leave notes and ratings for the books you read.
@@ -22,6 +22,7 @@ Hi all! Welcome to my book tracking app. I was inspired to make this for my part
 * Django
 * Heroku
 
+
 #### Next Steps:
 + Add a progress bar to help users know where they left off in a book
 + Improve the GUI so it does not look plain
@@ -29,4 +30,4 @@ Hi all! Welcome to my book tracking app. I was inspired to make this for my part
 + Limit amount of genres that can be visible to user
 + Improve on the display for the lists in My Library
 + Add a community page so users can see what other users are reading 
-
++ Change notes section so that users can post multiple comments 

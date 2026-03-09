@@ -45,7 +45,7 @@ def search_books(request):
         # 2. Use an f-string with curly braces for the variable
         url = f"https://openlibrary.org/search.json?q={query}"
         
-        # 3. Ensure you are using 'requests.get' (with a dot)
+        
         response = requests.get(url)
         
         if response.status_code == 200:
@@ -165,7 +165,7 @@ def update_book(request, pk):
         if status_value:
             book.status = status_value
 
-        # Update notes if sent (only for full form)
+        # Update notes if sent 
         notes_value = request.POST.get("notes")
         if notes_value is not None:
             book.notes = notes_value
