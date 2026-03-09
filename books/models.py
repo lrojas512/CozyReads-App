@@ -17,7 +17,6 @@ class Book (models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     open_library_id = models.CharField(max_length = 100)
-    title = models.CharField(max_length=255)
     authors = models.CharField(max_length=255, blank=True)
     cover_id = models.IntegerField(null=True, blank=True)
 

@@ -35,14 +35,14 @@ def home(request):
     return render(request, "books/home.html", {"trending_books": trending_books})
 
 def search_books(request):
-    # 1. Use request.GET to access query parameters
+   
     query = request.GET.get("q")
     next_page = request.GET.get("next", "/")
     
     results = []
     
     if query:
-        # 2. Use an f-string with curly braces for the variable
+        
         url = f"https://openlibrary.org/search.json?q={query}"
         
         
@@ -131,6 +131,7 @@ def book_detail(request, olid):
     }
 
     return render(request, "books/book_detail.html", context)
+
 @login_required
 def add_book(request):
     if request.method == "POST":
@@ -143,6 +144,7 @@ def add_book(request):
             status = "want"
         )
         return redirect ("my_books")
+    
 @login_required
 def my_books(request):
     want = Book.objects.filter(user=request.user,status="want")

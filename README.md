@@ -14,6 +14,7 @@ Hi all! Welcome to my book tracking app. I was inspired to make this for my part
 * [Google](https://www.google.com/)
 * [YouTube](https://www.youtube.com/)
 * [W3Schools](https://www.w3schools.com/python/python_intro.asp)
+* Logo created by chatGPT
 
 #### Technologies Used:
 * HTML
