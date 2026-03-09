@@ -16,7 +16,7 @@ def home(request):
     trending_books = []
 
     try:
-        response = request.get("https://openlibrary.org/subjects/popular.json?limit=5")
+        response = requests.get("https://openlibrary.org/subjects/popular.json?limit=5")
         data = response.json()
 
         for book in data.get("works", []):
