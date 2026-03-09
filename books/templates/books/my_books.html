@@ -71,7 +71,7 @@
     {% if book.rating %}
       <div class="book-rating">
         {% for i in "12345" %}
-          {% if forloop.counter <= book.rating|floatformat:0 %}
+          {% if forloop.counter <= book.rating|floatformat:0|add:0 %}
             ⭐
           {% else %}
             ✩
