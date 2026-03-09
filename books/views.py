@@ -61,7 +61,7 @@ def search_books(request):
 
 def book_detail(request, olid):
     url = f"https://openlibrary.org/{olid}.json"
-    response = request.get(url)
+    response = requests.get(url)
     data = response.json()
 
     # Description
@@ -77,7 +77,7 @@ def book_detail(request, olid):
     for author_ref in data.get("authors", []):
         author_key = author_ref.get("author", {}).get("key")
         if author_key:
-            r = request.get(f"https://openlibrary.org/{author_key.lstrip('/')}.json")
+            r = requests.get(f"https://openlibrary.org/{author_key.lstrip('/')}.json")
             if r.status_code == 200:
                 author_data = r.json()
                 name = author_data.get("name")
@@ -104,7 +104,7 @@ def book_detail(request, olid):
     rating = None
     try:
         rating_url = f"https://openlibrary.org/{olid}/ratings.json"
-        r = request.get(rating_url)
+        r = requests.get(rating_url)
         if r.status_code == 200:
             rating_data = r.json()
             
