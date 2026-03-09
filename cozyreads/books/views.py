@@ -96,13 +96,18 @@ def book_detail(request, olid):
     if r.status_code == 200:
         rating_data = r.json()
         rating = rating_data.get("average", None)
+    
+       # Genres / subjects
+    genres = data.get("subjects", [])  # This is usually a list of strings
+
 
     context = {
         "book": data,
         "description": description,
         "published_date": published_date,
         "authors": authors,
-        "rating": rating
+        "rating": rating,
+        "genres": genres
     }
 
     return render(request, "books/book_detail.html", context)

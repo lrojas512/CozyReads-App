@@ -24,6 +24,14 @@
     {% if rating %}
         <p><strong>Global rating:</strong> {{ rating|floatformat:1 }}/5 ⭐</p>
     {% endif %}
+    
+{% if genres %}
+    <p><strong>Genres:</strong>
+        {% for genre in genres %}
+            <span class="genre-tag">{{ genre }}</span>{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </p>
+{% endif %}
 
     <a href="/search/"><button class="btn">Back to Search</button></a>
 
