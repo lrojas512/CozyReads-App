@@ -20,14 +20,14 @@ def home(request):
         data = response.json()
 
         for book in data.get("works", []):
-            # Use Open Library work key as the 'olid' for your URL
-            olid = book.get("key").lstrip("/")  # remove leading '/'
+           
+            olid = book.get("key").lstrip("/")  
             
             trending_books.append({
                 "title": book.get("title"),
                 "author": ", ".join([author["name"] for author in book.get("authors", [])]) if book.get("authors") else "Unknown",
                 "cover_url": f"http://covers.openlibrary.org/b/id/{book['cover_id']}-M.jpg" if book.get("cover_id") else "",
-                "url": f"/books/{olid}/"  # links to your book_detail page
+                "url": f"/books/{olid}/"  
             })
     except Exception as e:
         print("Error fetching trending books:", e)
@@ -36,17 +36,21 @@ def home(request):
 
 def search_books(request):
     query = request.GET.get("q")
+    next_page = request.GET.get("next", "/")  
     results = []
 
     if query:
         url = f"https://openlibrary.org/search.json?q={query}"
         response = requests.get(url)
         data = response.json()
-        results = data["docs"]
-    
-    return render(request, "books/search.html", {
-        "results": results
-    })
+        results = data.get("docs", [])
+
+    context = {
+        "results": results,
+        "query": query,
+        "next_page": next_page,
+    }
+    return render(request, "books/search.html", context)
 
 def book_detail(request, olid):
     url = f"https://openlibrary.org/{olid}.json"
@@ -81,8 +85,8 @@ def book_detail(request, olid):
     published_date = "Unknown"
     if raw_date:
         try:
-            # Parse raw ISO date or just year
-            if len(raw_date) == 4:  # Only year
+            
+            if len(raw_date) == 4:  
                 published_date = f"01/01/{raw_date}"
             else:
                 dt = datetime.fromisoformat(raw_date)
@@ -96,17 +100,18 @@ def book_detail(request, olid):
         r = requests.get(rating_url)
         if r.status_code == 200:
             rating_data = r.json()
-            # Some OL rating JSON looks like {"summary": {"average": 4.5, "count": 20}}
+            
             summary = rating_data.get("summary", {})
             avg = summary.get("average")
             if avg is not None:
-                rating = round(float(avg), 2)  # Round to 2 decimal places
+                rating = round(float(avg), 2)  
     except Exception as e:
         print("Error fetching rating:", e)
         rating = None
        # Genres / subjects
-    genres = data.get("subjects", [])  # This is usually a list of strings
+    genres = data.get("subjects", [])  
 
+    previous_page = request.META.get('HTTP_REFERER', '/')
 
     context = {
         "book": data,
@@ -114,7 +119,8 @@ def book_detail(request, olid):
         "published_date": published_date,
         "authors": authors,
         "rating": rating,
-        "genres": genres
+        "genres": genres,
+        "previous_page": previous_page
     }
 
     return render(request, "books/book_detail.html", context)

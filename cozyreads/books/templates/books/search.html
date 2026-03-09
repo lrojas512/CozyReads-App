@@ -2,9 +2,13 @@
 {% block content %}
 <h2>Search For Books</h2>
 
-<form method="GET">
-  <input name="q" placeholder="Search books..." />
-  <button type="submit">Search</button>
+<form method="get" action="{% url 'search' %}">
+    <input type="text" name="q" placeholder="Search books..." required>
+    <input type="hidden" name="next" value="{{ request.path }}">
+    <button type="submit">Search</button>
+</form>
+<form method="get" action="{{ next_page }}">
+    <button type="submit">Back</button>
 </form>
 
 <hr>
