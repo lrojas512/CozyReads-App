@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-import requests
+
 from datetime import datetime
 from .models import Book
 from django.urls import reverse
@@ -16,7 +16,7 @@ def home(request):
     trending_books = []
 
     try:
-        response = requests.get("https://openlibrary.org/subjects/popular.json?limit=5")
+        response = request.get("https://openlibrary.org/subjects/popular.json?limit=5")
         data = response.json()
 
         for book in data.get("works", []):
@@ -41,7 +41,7 @@ def search_books(request):
 
     if query:
         url = f"https://openlibrary.org/search.json?q={query}"
-        response = requests.get(url)
+        response = request.get(url)
         data = response.json()
         results = data.get("docs", [])
 
@@ -54,7 +54,7 @@ def search_books(request):
 
 def book_detail(request, olid):
     url = f"https://openlibrary.org/{olid}.json"
-    response = requests.get(url)
+    response = request.get(url)
     data = response.json()
 
     # Description
@@ -70,7 +70,7 @@ def book_detail(request, olid):
     for author_ref in data.get("authors", []):
         author_key = author_ref.get("author", {}).get("key")
         if author_key:
-            r = requests.get(f"https://openlibrary.org/{author_key.lstrip('/')}.json")
+            r = request.get(f"https://openlibrary.org/{author_key.lstrip('/')}.json")
             if r.status_code == 200:
                 author_data = r.json()
                 name = author_data.get("name")
@@ -97,7 +97,7 @@ def book_detail(request, olid):
     rating = None
     try:
         rating_url = f"https://openlibrary.org/{olid}/ratings.json"
-        r = requests.get(rating_url)
+        r = request.get(rating_url)
         if r.status_code == 200:
             rating_data = r.json()
             
