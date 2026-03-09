@@ -77,6 +77,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'cozyreads.wsgi.application'
+ROOT_URLCONF='cozyreads.urls'
 
 
 # Database
