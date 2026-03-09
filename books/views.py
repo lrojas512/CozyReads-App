@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+import requests
 from datetime import datetime
 from .models import Book
 from django.urls import reverse
@@ -34,15 +35,22 @@ def home(request):
     return render(request, "books/home.html", {"trending_books": trending_books})
 
 def search_books(request):
+    # 1. Use request.GET to access query parameters
     query = request.GET.get("q")
-    next_page = request.GET.get("next", "/")  
+    next_page = request.GET.get("next", "/")
+    
     results = []
-
+    
     if query:
+        # 2. Use an f-string with curly braces for the variable
         url = f"https://openlibrary.org/search.json?q={query}"
-        response = request.get(url)
-        data = response.json()
-        results = data.get("docs", [])
+        
+        # 3. Ensure you are using 'requests.get' (with a dot)
+        response = requests.get(url)
+        
+        if response.status_code == 200:
+            data = response.json()
+            results = data.get("docs", [])
 
     context = {
         "results": results,
