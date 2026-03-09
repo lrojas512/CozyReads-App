@@ -8,75 +8,83 @@
   <div class="book-card">
     <img src="{{ book.cover_url }}">
     <div class="book-title">{{ book.title }}</div>
-    <div class="progress">
-      <div class="progress-bar" style=""width:{{ book.pages_read|floatformat:0 }}>
-      </div>
-    </div>
+      {% if book.notes %}
+      <div class="book-notes">Notes: {{ book.notes }}</div>
+    {% endif %}
+   <form method="post" action="{% url 'update_book' book.pk %}">
+    {% csrf_token %}
+    <input type="hidden" name="status" value="reading">
+    <input type="hidden" name="notes" value="{{ book.notes }}">
+    <input type="hidden" name="rating" value="{{ book.rating }}">
+    <button type="submit">Start Reading</button>
+</form>
     <a href="{% url 'update_book' book.id %}">Edit</a>
     <a href="{% url 'delete_book' book.id %}">Delete</a>
   </div>
 {% endfor %}
 </div>
-<h2>Currently Reading</h2>
-{% if reading %}
-    <ul>
-    {% for book in reading %}
-        <li>
-            <img src="{{ book.cover_url }}">
-            <br>
-            <strong>{{ book.title }}</strong> by {{ book.authors }}<br>
-            
-            {% if book.notes %}
-                <em>Notes:</em> {{ book.notes }}<br>
-            {% endif %}
 
-            {% if book.rating %}
-                <em>Rating:</em>
-                {% for i in "12345" %}
-                    {% if forloop.counter <= book.rating|floatformat:0 %}
-                        ⭐
-                    {% else %}
-                        ✩
-                    {% endif %}
-                {% endfor %}
-                <br>
-            {% endif %}
+<h2 class="section-title">📚 Currently Reading</h2>
+<div class="book-grid">
+{% for book in reading %}
+  <div class="book-card">
+    <img src="{{ book.cover_url }}">
+    <div class="book-title">{{ book.title }}</div>
+    {% if book.notes %}
+      <div class="book-notes">Notes: {{ book.notes }}</div>
+    {% endif %}
+    {% if book.rating %}
+      <div class="book-rating">
+        {% for i in "12345" %}
+          {% if forloop.counter <= book.rating|floatformat:0 %}
+            ⭐
+          {% else %}
+            ✩
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
 
-            <a href="{% url 'update_book' book.pk %}">Edit</a>
-        </li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No books currently being read.</p>
-{% endif %}
-<h2 class="section-title">✅ Completed</h2>
-{% if completed %}
-    <ul>
-    {% for book in completed %}
-        <li>
-            <img src="{{ book.cover_url }}">
-            <br>
-            <strong>{{ book.title }}</strong> by {{ book.authors }}<br>
-            {% if book.notes %}
-                <em>Notes:</em> {{ book.notes }}<br>
-            {% endif %}
-             {% if book.rating %}
-                <em>Rating:</em>
-                {% for i in "12345" %}
-                    {% if forloop.counter <= book.rating|floatformat:0 %}
-                        ⭐
-                    {% else %}
-                        ☆
-                    {% endif %}
-                {% endfor %}
-                <br>
-            {% endif %}
-            <a href="{% url 'update_book' book.pk %}">Edit</a>
-        </li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No completed books yet.</p>
-{% endif %}
+    <form method="post" action="{% url 'update_book' book.pk %}">
+      {% csrf_token %}
+      <input type="hidden" name="status" value="completed">
+      <button type="submit">Mark as Completed</button>
+    </form>
+    
+    <a href="{% url 'update_book' book.pk %}">Edit</a>
+    <a href="{% url 'delete_book' book.pk %}">Delete</a>
+  </div>
+{% empty %}
+  <p>No books currently being read.</p>
+{% endfor %}
 </div>
+
+<h2 class="section-title">✅ Completed</h2>
+<div class="book-grid">
+{% for book in completed %}
+  <div class="book-card">
+    <img src="{{ book.cover_url }}">
+    <div class="book-title">{{ book.title }}</div>
+    {% if book.notes %}
+      <div class="book-notes">Notes: {{ book.notes }}</div>
+    {% endif %}
+    {% if book.rating %}
+      <div class="book-rating">
+        {% for i in "12345" %}
+          {% if forloop.counter <= book.rating|floatformat:0 %}
+            ⭐
+          {% else %}
+            ✩
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+    <a href="{% url 'update_book' book.pk %}">Edit</a>
+    <a href="{% url 'delete_book' book.pk %}">Delete</a>
+  </div>
+{% empty %}
+  <p>No completed books yet.</p>
+{% endfor %}
+</div>
+
 {% endblock %}

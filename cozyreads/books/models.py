@@ -22,7 +22,7 @@ class Book (models.Model):
     cover_id = models.IntegerField(null=True, blank=True)
 
     status = models.CharField(max_length=20, choices = STATUS_CHOICES, default='want')
-    notes = models.TextField(blank=True)
+    notes = models.TextField(blank=True, null=True)
     rating = models.IntegerField(null=True, blank=True)
     pages_total = models.IntegerField(null=True, blank=True)
     pages_read = models.IntegerField(null=True, blank=True)

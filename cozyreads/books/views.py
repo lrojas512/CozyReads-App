@@ -153,24 +153,29 @@ def update_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
 
     if request.method == "POST":
-        # Update status
-        book.status = request.POST.get("status")
-        # Update notes
-        book.notes = request.POST.get("notes")
-        # Update rating safely
+        # Update status if sent
+        status_value = request.POST.get("status")
+        if status_value:
+            book.status = status_value
+
+        # Update notes if sent (only for full form)
+        notes_value = request.POST.get("notes")
+        if notes_value is not None:
+            book.notes = notes_value
+
+        # Update rating if sent
         rating_value = request.POST.get("rating")
         if rating_value in [None, ""]:
-            book.rating = None
+            pass  # do not overwrite existing rating
         else:
             try:
                 book.rating = float(rating_value)
             except ValueError:
-                book.rating = None
+                pass  # keep existing rating if invalid
 
         book.save()
         return redirect("my_books")
 
-    # GET request
     return render(request, "books/update_book.html", {"book": book})
 
 @login_required
