@@ -37,6 +37,21 @@
     </p>
 {% endif %}
 
+{% if user.is_authenticated %}
+<form method="post" action="{% url 'add_book' %}">
+    {% csrf_token %}
+    <input type="hidden" name="olid" value="{{ book.key|slice:'1:' }}"> <!-- remove leading '/' -->
+    <input type="hidden" name="title" value="{{ book.title }}">
+    <input type="hidden" name="authors" value="{{ authors|join:', ' }}">
+    {% if book.covers %}
+        <input type="hidden" name="cover_id" value="{{ book.covers.0 }}">
+    {% endif %}
+    <button type="submit" class="btn-add">➕ Add to My List</button>
+</form>
+{% else %}
+<p><a href="{% url 'login' %}">Login</a> to add this book to your list.</p>
+{% endif %}
+
     <a href="/search/"><button class="btn">Back to Search</button></a>
     <a href="{{ previous_page }}"><button class="btn">Back to Results</button></a>
 
