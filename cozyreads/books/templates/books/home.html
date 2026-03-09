@@ -4,4 +4,21 @@
 
 <a href="{% url 'search' %}">Search Books</a>
 <a href="{% url 'my_books' %}">My Library</a>
+<h2>Trending Books</h2>
+<div class="trending-books">
+    {% for book in trending_books %}
+        <a href="{{ book.url }}" class="book-card-link">
+            <div class="book-card">
+                {% if book.cover_url %}
+                    <img src="{{ book.cover_url }}" alt="{{ book.title }}" class="book-cover">
+                {% endif %}
+                <h3>{{ book.title }}</h3>
+                <p>by {{ book.author }}</p>
+            </div>
+        </a>
+    {% empty %}
+        <p>No trending books available.</p>
+    {% endfor %}
+</div>
+
 {% endblock %}

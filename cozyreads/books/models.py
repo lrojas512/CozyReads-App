@@ -7,6 +7,11 @@ class Book (models.Model):
         ('want', 'Want to Read'),
         ('completed', 'Completed'),
     ]
+    title = models.CharField(max_length=255)
+    author = models.CharField(max_length=255)
+    cover_url = models.URLField(blank=True, null=True)
+    description = models.TextField(blank=True)
+    trending_score = models.IntegerField(default=0) 
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     open_library_id = models.CharField(max_length = 100)

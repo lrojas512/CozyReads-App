@@ -4,13 +4,35 @@ from datetime import datetime
 from .models import Book
 from django.urls import reverse
 from .forms import SignUpForm
+from django.core.cache import cache
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
-def home (request):
-    return render(request, "books/home.html")
+
+
+def home(request):
+    trending_books = []
+
+    try:
+        response = requests.get("https://openlibrary.org/subjects/popular.json?limit=5")
+        data = response.json()
+
+        for book in data.get("works", []):
+            # Use Open Library work key as the 'olid' for your URL
+            olid = book.get("key").lstrip("/")  # remove leading '/'
+            
+            trending_books.append({
+                "title": book.get("title"),
+                "author": ", ".join([author["name"] for author in book.get("authors", [])]) if book.get("authors") else "Unknown",
+                "cover_url": f"http://covers.openlibrary.org/b/id/{book['cover_id']}-M.jpg" if book.get("cover_id") else "",
+                "url": f"/books/{olid}/"  # links to your book_detail page
+            })
+    except Exception as e:
+        print("Error fetching trending books:", e)
+
+    return render(request, "books/home.html", {"trending_books": trending_books})
 
 def search_books(request):
     query = request.GET.get("q")
@@ -27,7 +49,7 @@ def search_books(request):
     })
 
 def book_detail(request, olid):
-    url = f"https://openlibrary.org{olid}.json"
+    url = f"https://openlibrary.org/{olid}.json"
     response = requests.get(url)
     data = response.json()
 
@@ -44,12 +66,13 @@ def book_detail(request, olid):
     for author_ref in data.get("authors", []):
         author_key = author_ref.get("author", {}).get("key")
         if author_key:
-            r = requests.get(f"https://openlibrary.org{author_key}.json")
+            r = requests.get(f"https://openlibrary.org/{author_key.lstrip('/')}.json")
             if r.status_code == 200:
                 author_data = r.json()
                 name = author_data.get("name")
                 if name:
                     authors.append(name)
+
     if not authors:
         authors = ["Unknown Author"]
 
@@ -68,7 +91,7 @@ def book_detail(request, olid):
             published_date = raw_date 
     # Global rating
     rating = None
-    rating_url = f"https://openlibrary.org{olid}/ratings.json"
+    rating_url = f"https://openlibrary.org/{olid}/ratings.json"
     r = requests.get(rating_url)
     if r.status_code == 200:
         rating_data = r.json()
